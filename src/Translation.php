@@ -67,6 +67,14 @@ class Translation
         $collapsedKeys = collect($allMatches)->collapse();
         $keys = $collapsedKeys->combine($collapsedKeys);
 
+        $keys = $keys->mapWithKeys(function ($item, $key) {
+            if (strpos($key, '__JSON__') !== false) {
+                $key = str_replace('__JSON__.', '', $key);
+                $item = str_replace('__JSON__.', '', $item);
+            }
+            return [$key => $item];
+        });
+
         if ($mergeKeys) {
             $content = $this->getFileContent();
             $keys = $content->union(
